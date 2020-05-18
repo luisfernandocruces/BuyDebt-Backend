@@ -56,7 +56,7 @@ exports.registerJudicialPerson = async function (req, res, next) {
     let newUser = await User.create(
       {
         email: user.email,
-        password: user.password,
+        password: bcrypt.hashSync(user.password, 8),
         rol: user.rol,
         nit: user.nit,
         phone: user.phone,
@@ -130,7 +130,7 @@ exports.signin = async function (req, res, next) {
       }
       console.log("aqui: ", password, " - ", user.password);
       var passwordIsValid = bcrypt.compareSync(password, user.password);
-
+      console.log("vamos aqui: " + passwordIsValid);
       if (!passwordIsValid) {
         return res.status(401).send({
           accessToken: null,
