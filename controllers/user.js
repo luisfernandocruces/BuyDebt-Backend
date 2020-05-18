@@ -1,4 +1,8 @@
 var User = require("../models/user");
+const config = require("../config/auth.config");
+
+var jwt = require("jsonwebtoken");
+var bcrypt = require("bcryptjs");
 
 exports.index = function (req, res, next) {
   console.log(req.body);
@@ -12,7 +16,7 @@ exports.registerNaturalPerson = async function (req, res, next) {
     let newUser = await User.create(
       {
         email: user.email,
-        password: user.password,
+        password: bcrypt.hashSync(user.password, 8),
         rol: user.rol,
         type_document: user.type_document,
         number_document: user.number_document,
@@ -111,4 +115,41 @@ exports.deleteUser = async function (req, res, next) {
     message: "El proyecto se elimino    ",
     data: deleteRowCount,
   });
+};
+
+exports.signin = async function (req, res, next) {
+  let { email, password } = req.body;
+  await User.findOne({
+    where: {
+      email: email,
+    },
+  })
+    .then((user) => {
+      if (!user) {
+        return res.status(404).send({ message: "Usuario no encontrado" });
+      }
+      console.log("aqui: ", password, " - ", user.password);
+      var passwordIsValid = bcrypt.compareSync(password, user.password);
+
+      if (!passwordIsValid) {
+        return res.status(401).send({
+          accessToken: null,
+          message: "Contraseña inválida",
+        });
+      }
+
+      var token = jwt.sign({ id: user.email }, config.secret, {
+        expiresIn: 86400, // 24 hours
+      });
+
+      res.status(200).send({
+        email: user.email,
+        rol: user.rol,
+        accessToken: token,
+      });
+    })
+    .catch((err) => {
+      console.log(err.message);
+      res.status(500).send({ message: err.message });
+    });
 };

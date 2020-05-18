@@ -11,4 +11,6 @@ router.post("/naturalPerson", userController.registerNaturalPerson);
 router.post("/judicialPerson", userController.registerJudicialPerson);
 router.delete("/:id", userController.deleteUser);
 
+router.post("/signin", userController.signin);
+
 module.exports = router;
