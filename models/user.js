@@ -37,6 +37,6 @@ const user = sequelize.define(
   { timestamps: false }
 );
 
-user.hasMany(debt,{foreingKey:'userId',sourceKey:'email'})
-debt.belongsTo(user,{foreingKey:'userId',sourceKey:'email'} )
+//user.hasMany(debt,{foreingKey:'userid',sourceKey:'email'})
+//debt.belongsTo(user,{foreingKey:'userid',sourceKey:'email'} )
 module.exports = user;
