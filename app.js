@@ -31,6 +31,7 @@ app.use("/", indexRouter);
 app.use("/users", usersRouter);
 app.use("/debts", debtsRouter);
 
+//the new
 app.get("*", (req, res) => {
   res.sendFile(path.join(__dirname + "/public/index.html"));
 });
