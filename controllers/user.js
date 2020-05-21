@@ -153,3 +153,25 @@ exports.signin = async function (req, res, next) {
       res.status(500).send({ message: err.message });
     });
 };
+
+exports.changePassword = async function (req, res, next) {
+  let userInto = req.body;
+  console.log(userInto);
+  let newPassword = bcrypt.hashSync(userInto.newPassword, 8);
+  const user = await User.findOne({
+    attributes: ["email", "password"],
+    where: {
+      email: userInto.email,
+    },
+  });
+
+  if (user) {
+    await user.update({
+      password: newPassword,
+    });
+  }
+  return res.json({
+    message: "Contraseña actualizada correctamente",
+    data: user,
+  });
+};
